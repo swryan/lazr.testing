@@ -1,0 +1,156 @@
+..
+    This file is part of lazr.config.
+
+    lazr.config is free software: you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or (at your
+    option) any later version.
+
+    lazr.config is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+    License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with lazr.config.  If not, see <http://www.gnu.org/licenses/>.
+
+This project uses zc.buildout for development.
+
+Basics
+======
+
+To develop or run tests, first run ``$DESIRED_PYTHON bootstrap.py`` in this
+directory, where you replace ``$DESIRED_PYTHON`` with the python that should
+be used to build and run this project. A non-system Python is highly
+recommended, but not required.
+
+Then run ``./bin/buildout``.  (NOTE: Ubuntu Intrepid users, see bottom of this
+document if this generates errors.)
+
+You can now run tests with ``./bin/test``.  Use ``./bin/test --help`` to read
+about the many options.
+
+To gain access to a Python interpreter with the package and its dependent eggs
+available, use ``./bin/py``.
+
+You can generate ctags and idutils files for a variety of editors using
+``./bin/tags`` (see ``./bin/tags --help``). The advantage of the files
+generated from this utility is that they include the sourcecode from the eggs
+used in this buildout.
+
+To generate distributions, use ``./bin/buildout setup . SETUP_CMD [...]``.
+That is, you can use ``./bin/buildout setup .`` as if it were
+``python setup.py``.  The intended advantage is easy access to a pristine,
+local version of setuptools.
+
+Global Cache
+============
+
+Every project using zc.buildout will keep its own collection of eggs by
+default.  You may want to cache these eggs, and their downloaded
+distributions, globally.  To do so, perform the following instructions.
+
+- ``mkdir -p ~/.buildout/eggs``
+- ``mkdir ~/.buildout/download-cache``
+- Create ``~/.buildout/default.cfg`` with the following content, replacing
+  "$HOME" with the path to your home::
+
+    [buildout]
+    eggs-directory=$HOME/.buildout/eggs
+    download-cache=$HOME/.buildout/download-cache
+
+Working with Unreleased Packages
+================================
+
+You may want to develop with an unreleased distribution of another package.
+To do so, you have many options.  Here are three.
+
+Source
+------
+
+If you have a source package, you can add it to this buildout (temporarily or,
+if really appropriate, permanently) as follows.
+
+NOTE: We'll use "this software" to refer to the software/buildout to which you
+want to add a source package; and "the other software" to refer to the source
+package that you want to add.
+
+- Add the top-level directory (the one with the setup.py) of the other
+  software to somewhere accessible to this software. You might use ``bzr
+  add``, symbolic links, svn externals, or whatever the appropriate tool is
+  for the situation.  A reasonable option is to add it in the top-level
+  directory of this software.
+- In this software's buildout.cfg, in the [buildout] section, look for a
+  ``develop`` key.  It will probably look like this: ``develop = .``.
+  Edit it to include the directory of the other software.  For instance, if
+  you added it at the top level of this software's tree in a folder called
+  "lazr_foo," you would change the line in buildout.cfg to read
+  ``develop = . lazr_foo``.
+- Rerun ``bin/buildout``.
+
+Barring version conflicts in your setup.py or buildout configuration (which
+will be reported as errors when you run `bin/buildout``), you should now be
+using the source version of the dependency. Look at one of the scripts in
+``bin``, such as ``bin/test`` to verify, if you like.
+
+To undo, remove the line in buildout.conf, remove the other software's
+directory if necessary for cleanliness, and rerun ``bin/buildout``.
+
+Distribution
+------------
+
+If you have a source distribution or an egg, and you set up the download-cache
+as described in the `Global Cache`_ section above, you can put the
+distribution (sdist or egg) in the download-cache's ``dist`` directory.
+Then rerun bin/buildout.
+
+Alternatively, if you have an egg, you can put it in your eggs directory, or
+in the shared eggs directory as described in the `Global Cache`_ section, if
+you are using that. The rerun bin/buildout.
+
+In both cases, to undo, you must remove the egg from the local or shared
+``eggs`` directory. If you used the ``download-cache/dist`` directory, you
+must also remove it from there.
+
+Private Source
+--------------
+
+If you want to distribute a source distribution privately, see
+http://pypi.python.org/pypi/zc.buildoutsftp/.
+
+References
+==========
+
+There is much, much more to learn about zc.buildout.  It works well for small
+packages, but is even better for big projects.  For more information about
+zc.buildout:
+
+- http://grok.zope.org/documentation/tutorial/introduction-to-zc.buildout
+
+  Presentation notes of an introduction to zc.buildout by its author, Jim
+  Fulton.
+
+- http://pypi.python.org/pypi/zc.buildout
+
+  The user manual.
+
+Ubunutu Intrepid Problem
+========================
+
+Intrepid has a bug working with buildout.  You may have to hack to fix it.
+Here's an example of the Python 2.4 version of the hack.
+
+$ sudo rm  /usr/lib/python2.4/site-packages/GMenuSimpleEditor/*.py
+$ sudo ln
+-s /var/lib/python-support/python2.4/GMenuSimpleEditor/*.py /usr/lib/python2.4/site-packages/GMenuSimpleEditor/
+
+Python 2.5 would need the same kind of fix (replace all three instances of
+"python2.4" with "python2.5" in the above).
+
+The author of this document tried an Intrepid upgrade and an aptitude
+reinstall of python-gmenu to no avail before doing the rough-and-tumble change
+described above.
+
+See
+https://bugs.edge.launchpad.net/ubuntu/+source/gnome-menus/+bug/301571 and the
+bug linked to it by datakid.
