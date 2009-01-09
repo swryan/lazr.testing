@@ -1,6 +1,6 @@
-# Copyright 2008-2009 Canonical Ltd.  All rights reserved.
+# Copyright 2009 Canonical Ltd.  All rights reserved.
 #
-# This file is part of lazr.config.
+# This file is part of lazr.yourpkg.
 #
 # lazr.config is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by
