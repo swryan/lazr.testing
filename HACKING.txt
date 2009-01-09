@@ -23,6 +23,16 @@ Introduction
 These are guidelines for hacking on the lazr.yourpkg project.  But first,
 please see the common hacking guidelines at:
 
-    http://dev.launchpad.net/LAZRHacking
+    http://dev.launchpad.net/Hacking
 
 
+Getting help
+------------
+
+If you find bugs in this package, you can report them here:
+
+    https://launchpad.net/lazr.yourpkg
+
+If you want to discuss this package, join the team and mailing list here:
+
+    https://launchpad.net/lazr-developers
