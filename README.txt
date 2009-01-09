@@ -1,3 +1,6 @@
+This is a template for your lazr package.  To start your own lazr package,
+branch this code and change 'yourpkg' to your package's actual name.
+
 ..
     This file is part of lazr.yourpkg.
 
@@ -13,16 +16,3 @@
 
     You should have received a copy of the GNU Lesser General Public License
     along with lazr.yourpkg.  If not, see <http://www.gnu.org/licenses/>.
-
-This project uses zc.buildout for development.
-
-============
-Introduction
-============
-
-These are guidelines for hacking on the lazr.yourpkg project.  But first,
-please see the common hacking guidelines at:
-
-    http://dev.launchpad.net/LAZRHacking
-
-

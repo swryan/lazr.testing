@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with lazr.config.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
 from setuptools import setup, find_packages
 
 # generic helpers primarily for the long_description
@@ -31,6 +32,8 @@ def generate(*docname_or_string):
     return '\n'.join(res)
 # end generic helpers
 
+
+sys.path.insert(0, 'src')
 from lazr.yourpkg import __version__
 
 setup(

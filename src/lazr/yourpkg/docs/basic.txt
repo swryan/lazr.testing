@@ -1,0 +1,8 @@
+Importable
+==========
+
+The lazr.yourpkg package is importable, and has a version number.
+
+    >>> import lazr.yourpkg
+    >>> print 'VERSION:', lazr.yourpkg.__version__
+    VERSION: ...
