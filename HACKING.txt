@@ -35,4 +35,8 @@ If you find bugs in this package, you can report them here:
 
 If you want to discuss this package, join the team and mailing list here:
 
-    https://launchpad.net/lazr-developers
+    https://launchpad.net/~lazr-developers
+
+or send a message to:
+
+    lazr-developers@lists.launchpad.net

@@ -38,7 +38,7 @@ from lazr.yourpkg import __version__
 
 setup(
     name='lazr.yourpkg',
-    version='1.1',
+    version=__version__,
     namespace_packages=['lazr'],
     packages=find_packages('src'),
     package_dir={'':'src'},

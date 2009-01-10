@@ -1,5 +1,6 @@
 This is a template for your lazr package.  To start your own lazr package,
-branch this code and change 'yourpkg' to your package's actual name.
+branch this code and change 'yourpkg' to your package's actual name in all
+files.
 
 ..
     This file is part of lazr.yourpkg.

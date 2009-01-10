@@ -17,4 +17,6 @@
 LAZR yourpkg
 ***********
 
-Blah, blah, blah.
+This is a pure template for new lazr namespace packages.  Whenever you want to
+make a new lazr subpackage, just branch this code and change all occurrences
+of 'yourpkg' with whatever your subpackage's name is.
