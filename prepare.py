@@ -55,6 +55,8 @@ committing them.""")
     parser.add_option('-v', '--verbose',
                       dest='verbosity', action='count', default=0,
                       help='Increase verbosity.')
+    parser.add_option('-n', '--dry-run', action='store_true', default=False,
+                      help='Make no changes, just show what would be done.')
     # Parse the command line options.
     options, arguments = parser.parse_args()
     # There should be exactly one argument, which is the short name of the new
@@ -68,57 +70,69 @@ committing them.""")
     return parser, options, arguments[0]
 
 
-def hack_file(src, new_name, verbosity):
+def hack_file(src, new_name, options):
     """Hack the contents of the file, essentially s/yourpkg/new_name/.
 
     :param src: The full path name of the file to hack.
     :type src: string
     :param new_name: The new package's name.
     :type new_name: string
-    :param verbosity: The verbosity level.
-    :type verbosity: int
+    :param options: The options instance.
+    :type options: Options
     """
-    if verbosity > 0:
-        print 'Substituting in', src
     dest = src + '.tmp'
     replacement = 'lazr.' + new_name
+    total_substitution_count = 0
     with nested(open(src), open(dest, 'w')) as (in_file, out_file):
         for line in in_file:
-            substituted = cre.sub(replacement, line)
+            substituted, substitution_count = cre.subn(replacement, line)
             out_file.write(substituted)
-    # Move the temporary file into place.
-    os.rename(dest, src)
+            total_substitution_count += substitution_count
+    # Move the temporary file into place, unless dry-running.
+    if options.dry_run or total_substitution_count == 0:
+        os.remove(dest)
+    else:
+        os.rename(dest, src)
+    if options.verbosity > 0:
+        if options.verbosity > 1 or total_substitution_count > 0:
+            print 'File:', src, 'changes:', total_substitution_count
 
 
-def walk_and_replace(directory, name, verbosity):
+def walk_and_replace(directory, name, options):
     """Walk the directory, looking for patterns in files to replace.
 
     :param directory: The directory to begin walking.
     :type directory: string
     :param new_name: The new package's name.
     :type new_name: string
-    :param verbosity: The verbosity level.
-    :type verbosity: int
+    :param options: The options instance.
+    :type options: Options
     """
     # Start by moving src/lazr/yourpkg to src/lazr/name.
-    os.system('bzr mv src/lazr/yourpkg src/lazr/%s' % name)
+    if options.verbosity > 0:
+        print 'Moving src/lazr/yourpkg -> src/lazr/%s' % name
+    if not options.dry_run:
+        os.system('bzr mv src/lazr/yourpkg src/lazr/%s' % name)
     for dirpath, dirnames, filenames in os.walk(directory):
         # Skip the .bzr directory!
-        if dirpath == '.bzr':
-            continue
+        if '.bzr' in dirnames:
+            dirnames.remove('.bzr')
         for filename in filenames:
+            if filename.endswith('.pyc'):
+                continue
             # We should do the substitution in every file.
             path = os.path.join(dirpath, filename)
-            hack_file(path, name, verbosity)
+            hack_file(path, name, options)
 
 
 def main():
     parser, options, name = parse_arguments()
-    walk_and_replace('.', name, options.verbosity)
+    walk_and_replace('.', name, options)
     if not options.keep:
         if options.verbosity > 0:
             print 'Removing prepare.py'
-        os.system('bzr rm prepare.py')
+        if not options.dry_run:
+            os.system('bzr rm prepare.py')
 
 
 if __name__ == '__main__':
