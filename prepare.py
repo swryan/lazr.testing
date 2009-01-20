@@ -80,7 +80,7 @@ def hack_file(src, new_name):
             substituted = cre.sub(replacement, line)
             out_file.write(substituted)
     # Move the temporary file into place.
-    os.rename(dest, sr)
+    os.rename(dest, src)
 
 
 def walk_and_replace(directory, name):
