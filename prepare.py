@@ -103,6 +103,9 @@ def walk_and_replace(directory, name, verbosity):
     # Start by moving src/lazr/yourpkg to src/lazr/name.
     os.system('bzr mv src/lazr/yourpkg src/lazr/%s' % name)
     for dirpath, dirnames, filenames in os.walk(directory):
+        # Skip the .bzr directory!
+        if dirpath == '.bzr':
+            continue
         for filename in filenames:
             # We should do the substitution in every file.
             path = os.path.join(dirpath, filename)
