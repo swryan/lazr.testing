@@ -83,22 +83,24 @@ def hack_file(src, new_name):
     os.rename(dest, sr)
 
 
-def walk_and_replace(directory):
+def walk_and_replace(directory, name):
     """Walk the directory, looking for patterns in files to replace.
 
     :param directory: The directory to begin walking.
     :type directory: string
+    :param new_name: The new package's name.
+    :type new_name: string
     """
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in filenames:
             # We should do the substitution in every file.
             path = os.path.join(dirpath, filename)
-            hack_file(path)
+            hack_file(path, name)
 
 
 def main():
     parser, options, name = parse_arguments()
-    walk_and_replace('.')
+    walk_and_replace('.', name)
     if not options.keep:
         os.remove('prepare.py')
 
