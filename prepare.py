@@ -91,6 +91,8 @@ def walk_and_replace(directory, name):
     :param new_name: The new package's name.
     :type new_name: string
     """
+    # Start by moving src/lazr/yourpkg to src/lazr/name.
+    os.system('bzr mv src/lazr/yourpkg src/lazr/%s' % name)
     for dirpath, dirnames, filenames in os.walk(directory):
         for filename in filenames:
             # We should do the substitution in every file.
@@ -102,7 +104,7 @@ def main():
     parser, options, name = parse_arguments()
     walk_and_replace('.', name)
     if not options.keep:
-        os.remove('prepare.py')
+        os.system('bzr rm prepare.py')
 
 
 if __name__ == '__main__':
