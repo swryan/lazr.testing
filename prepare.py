@@ -52,6 +52,8 @@ automate.  After running this script, you should verify all changes before
 committing them.""")
     parser.add_option('-k', '--keep', action='store_true', default=False,
                       help='Keep this prepare.py script after completion.')
+    parser.add_option('-v', '--verbose', action='count', default=0,
+                      help='Increase verbosity.')
     # Parse the command line options.
     options, arguments = parser.parse_args()
     # There should be exactly one argument, which is the short name of the new
@@ -65,14 +67,18 @@ committing them.""")
     return parser, options, arguments[0]
 
 
-def hack_file(src, new_name):
+def hack_file(src, new_name, verbosity):
     """Hack the contents of the file, essentially s/yourpkg/new_name/.
 
     :param src: The full path name of the file to hack.
     :type src: string
     :param new_name: The new package's name.
     :type new_name: string
+    :param verbosity: The verbosity level.
+    :type verbosity: int
     """
+    if verbosity > 0:
+        print 'Substituting in', src
     dest = src + '.tmp'
     replacement = 'lazr.' + new_name
     with nested(open(src), open(dest, 'w')) as (in_file, out_file):
@@ -83,13 +89,15 @@ def hack_file(src, new_name):
     os.rename(dest, src)
 
 
-def walk_and_replace(directory, name):
+def walk_and_replace(directory, name, verbosity):
     """Walk the directory, looking for patterns in files to replace.
 
     :param directory: The directory to begin walking.
     :type directory: string
     :param new_name: The new package's name.
     :type new_name: string
+    :param verbosity: The verbosity level.
+    :type verbosity: int
     """
     # Start by moving src/lazr/yourpkg to src/lazr/name.
     os.system('bzr mv src/lazr/yourpkg src/lazr/%s' % name)
@@ -97,13 +105,15 @@ def walk_and_replace(directory, name):
         for filename in filenames:
             # We should do the substitution in every file.
             path = os.path.join(dirpath, filename)
-            hack_file(path, name)
+            hack_file(path, name, verbosity)
 
 
 def main():
     parser, options, name = parse_arguments()
-    walk_and_replace('.', name)
+    walk_and_replace('.', name, options.verbosity)
     if not options.keep:
+        if options.verbosity > 0:
+            print 'Removing prepare.py'
         os.system('bzr rm prepare.py')
 
 
