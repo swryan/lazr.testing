@@ -52,7 +52,8 @@ automate.  After running this script, you should verify all changes before
 committing them.""")
     parser.add_option('-k', '--keep', action='store_true', default=False,
                       help='Keep this prepare.py script after completion.')
-    parser.add_option('-v', '--verbose', action='count', default=0,
+    parser.add_option('-v', '--verbose',
+                      dest='verbosity', action='count', default=0,
                       help='Increase verbosity.')
     # Parse the command line options.
     options, arguments = parser.parse_args()
