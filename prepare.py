@@ -32,7 +32,7 @@ from optparse import OptionParser
 sys.path.insert(0, 'src')
 from lazr.yourpkg import __version__
 
-cre = re.compile(re.escape('lazr.yourpkg'))
+cre = re.compile(re.escape('yourpkg'))
 
 
 def parse_arguments():
@@ -81,11 +81,10 @@ def hack_file(src, new_name, options):
     :type options: Options
     """
     dest = src + '.tmp'
-    replacement = 'lazr.' + new_name
     total_substitution_count = 0
     with nested(open(src), open(dest, 'w')) as (in_file, out_file):
         for line in in_file:
-            substituted, substitution_count = cre.subn(replacement, line)
+            substituted, substitution_count = cre.subn(new_name, line)
             out_file.write(substituted)
             total_substitution_count += substitution_count
     # Move the temporary file into place, unless dry-running.
