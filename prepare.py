@@ -117,7 +117,8 @@ def walk_and_replace(directory, name, options):
         for filename in filenames:
             # Skip the prepare.py file if we're not keeping it, otherwise bzr
             # rm will complain.
-            if os.path.join(dirpath, filename) == __file__:
+            if (not options.keep and
+                os.path.join(dirpath, filename) == __file__):
                 continue
             if filename.endswith('.pyc'):
                 continue
