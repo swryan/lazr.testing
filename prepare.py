@@ -115,6 +115,10 @@ def walk_and_replace(directory, name, options):
         if '.bzr' in dirnames:
             dirnames.remove('.bzr')
         for filename in filenames:
+            # Skip the prepare.py file if we're not keeping it, otherwise bzr
+            # rm will complain.
+            if os.path.join(dirpath, filename) == __file__:
+                continue
             if filename.endswith('.pyc'):
                 continue
             # We should do the substitution in every file.
