@@ -32,7 +32,7 @@ from optparse import OptionParser
 sys.path.insert(0, 'src')
 from lazr.yourpkg import __version__
 
-cre = re.compile(re.escape('yourpkg'))
+regexp = re.compile(re.escape('yourpkg'))
 
 
 def parse_arguments():
@@ -46,10 +46,8 @@ def parse_arguments():
 %prog [options] name
 
 Hack the files in the lazr project template to reflect the name of the project
-you're creating.  This physically edits the files, dropping you into the
-editor of your choice (via $EDITOR) for any changes this script can't
-automate.  After running this script, you should verify all changes before
-committing them.""")
+you're creating.  After running this script, you should verify all changes
+before committing them.""")
     parser.add_option('-k', '--keep', action='store_true', default=False,
                       help='Keep this prepare.py script after completion.')
     parser.add_option('-v', '--verbose',
@@ -70,13 +68,13 @@ committing them.""")
     return parser, options, arguments[0]
 
 
-def hack_file(src, new_name, options):
-    """Hack the contents of the file, essentially s/yourpkg/new_name/.
+def hack_file(src, name, options):
+    """Hack the contents of the file, essentially s/yourpkg/name/.
 
     :param src: The full path name of the file to hack.
     :type src: string
-    :param new_name: The new package's name.
-    :type new_name: string
+    :param name: The new package's name.
+    :type name: string
     :param options: The options instance.
     :type options: Options
     """
@@ -84,7 +82,7 @@ def hack_file(src, new_name, options):
     total_substitution_count = 0
     with nested(open(src), open(dest, 'w')) as (in_file, out_file):
         for line in in_file:
-            substituted, substitution_count = cre.subn(new_name, line)
+            substituted, substitution_count = regexp.subn(name, line)
             out_file.write(substituted)
             total_substitution_count += substitution_count
     # Move the temporary file into place, unless dry-running.
@@ -102,8 +100,8 @@ def walk_and_replace(directory, name, options):
 
     :param directory: The directory to begin walking.
     :type directory: string
-    :param new_name: The new package's name.
-    :type new_name: string
+    :param name: The new package's name.
+    :type name: string
     :param options: The options instance.
     :type options: Options
     """
@@ -126,7 +124,13 @@ def walk_and_replace(directory, name, options):
 
 def main():
     parser, options, name = parse_arguments()
+    # Do some basic sanity checking on the name.
+    if name.count('.') > 0:
+        parser.error('Name may not have dots in it')
+    if options.dry_run:
+        options.verbosity = max(options.verbosity, 1)
     walk_and_replace('.', name, options)
+    # --dry-run implies at least one level of verbosity.
     if not options.keep:
         if options.verbosity > 0:
             print 'Removing prepare.py'
