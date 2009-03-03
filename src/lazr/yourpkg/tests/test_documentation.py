@@ -24,9 +24,8 @@ def test_suite():
                      for filename in os.listdir(docs_directory)
                      if filename.endswith('.txt')]
 
+    kwargs = dict(
+        module_relative=True,
+        optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
     return unittest.TestSuite((
-        doctest.DocFileSuite(
-            *doctest_files,
-            module_relative=True,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
-        ))
+        doctest.DocFileSuite(*doctest_files, **kwargs)))
