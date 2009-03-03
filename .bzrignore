@@ -4,3 +4,5 @@ develop-eggs
 develop-eggs
 parts
 src/lazr.yourpkg.egg-info
+tags
+TAGS
