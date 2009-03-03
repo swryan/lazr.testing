@@ -1,5 +1,5 @@
 =====================
-NEWS for lazr.yourpkg
+NEWS for lazr.testing
 =====================
 
 1.0 (200X-XX-XX)

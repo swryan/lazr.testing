@@ -1,0 +1,8 @@
+Importable
+==========
+
+The lazr.testing package is importable, and has a version number.
+
+    >>> import lazr.testing
+    >>> print 'VERSION:', lazr.testing.__version__
+    VERSION: ...

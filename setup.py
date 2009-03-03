@@ -1,19 +1,19 @@
 # Copyright 2009 Canonical Ltd.  All rights reserved.
 #
-# This file is part of lazr.yourpkg
+# This file is part of lazr.testing
 #
-# lazr.yourpkg is free software: you can redistribute it and/or modify it
+# lazr.testing is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or (at your
 # option) any later version.
 #
-# lazr.yourpkg is distributed in the hope that it will be useful, but WITHOUT
+# lazr.testing is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 # FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 # License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with lazr.yourpkg.  If not, see <http://www.gnu.org/licenses/>.
+# along with lazr.testing.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys
 from setuptools import setup, find_packages
@@ -34,10 +34,10 @@ def generate(*docname_or_string):
 
 
 sys.path.insert(0, 'src')
-from lazr.yourpkg import __version__
+from lazr.testing import __version__
 
 setup(
-    name='lazr.yourpkg',
+    name='lazr.testing',
     version=__version__,
     namespace_packages=['lazr'],
     packages=find_packages('src'),
@@ -48,14 +48,14 @@ setup(
     maintainer_email='lazr-developers@lists.launchpad.net',
     description=open('README.txt').readline().strip(),
     long_description=generate(
-        'src/lazr/yourpkg/README.txt',
-        'src/lazr/yourpkg/NEWS.txt'),
+        'src/lazr/testing/README.txt',
+        'src/lazr/testing/NEWS.txt'),
     license='LGPL v3',
     install_requires=[
         'setuptools',
         'zope.interface',
         ],
-    url='https://launchpad.net/lazr.yourpkg',
+    url='https://launchpad.net/lazr.testing',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
