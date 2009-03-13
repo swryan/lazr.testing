@@ -6,3 +6,5 @@ parts
 src/lazr.yourpkg.egg-info
 tags
 TAGS
+build
+eggtestinfo-0.2.2-py2.4.egg
