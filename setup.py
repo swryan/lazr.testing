@@ -63,5 +63,5 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python"],
     setup_requires=['eggtestinfo'],
-    test_suite='lazr.yourpkg.tests',
+    test_suite='lazr.yourpkg.tests.test_suite',
     )
