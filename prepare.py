@@ -130,12 +130,14 @@ def walk_and_replace(directory, name, options):
 def main():
     parser, options, name = parse_arguments()
     # Do some basic sanity checking on the name.
+    if name.startswith('lazr.'):
+        name = name[5:]
     if name.count('.') > 0:
         parser.error('Name may not have dots in it')
     if options.dry_run:
+        # --dry-run implies at least one level of verbosity.
         options.verbosity = max(options.verbosity, 1)
     walk_and_replace('.', name, options)
-    # --dry-run implies at least one level of verbosity.
     if not options.keep:
         if options.verbosity > 0:
             print 'Removing prepare.py'
