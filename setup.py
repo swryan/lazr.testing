@@ -61,6 +61,7 @@ setup(
         'zope.interface',
         ],
     url='https://launchpad.net/lazr.yourpkg',
+    download_url= 'https://launchpad.net/lazr.yourpkg/+download',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
