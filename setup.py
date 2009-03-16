@@ -15,6 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with lazr.yourpkg.  If not, see <http://www.gnu.org/licenses/>.
 
+import ez_setup
+ez_setup.use_setuptools()
+
 import sys
 from setuptools import setup, find_packages
 
