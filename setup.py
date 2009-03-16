@@ -55,7 +55,7 @@ setup(
     long_description=generate(
         'src/lazr/yourpkg/README.txt',
         'src/lazr/yourpkg/NEWS.txt'),
-    license='LGPL v3',
+    license='LGPL v3 or later',
     install_requires=[
         'setuptools',
         'zope.interface',
