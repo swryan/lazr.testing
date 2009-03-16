@@ -68,6 +68,6 @@ setup(
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Operating System :: OS Independent",
         "Programming Language :: Python"],
-    setup_requires=['eggtestinfo'],
+    setup_requires=['eggtestinfo', 'setuptools_bzr'],
     test_suite='lazr.yourpkg.tests.test_suite',
     )
