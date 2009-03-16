@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright 2009 Canonical Ltd.  All rights reserved.
 #
 # This file is part of lazr.yourpkg
