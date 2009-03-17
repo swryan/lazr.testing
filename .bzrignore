@@ -3,7 +3,7 @@ develop-eggs
 .installed.cfg
 develop-eggs
 parts
-src/lazr.yourpkg.egg-info
+*.egg-info
 tags
 TAGS
 build

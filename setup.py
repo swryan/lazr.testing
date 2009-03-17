@@ -68,6 +68,10 @@ setup(
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Operating System :: OS Independent",
         "Programming Language :: Python"],
+    extras_require=dict(
+        docs=['Sphinx',
+              'z3c.recipe.sphinxdoc']
+    ),
     setup_requires=['eggtestinfo', 'setuptools_bzr'],
-    test_suite='lazr.yourpkg.tests.test_suite',
+    test_suite='lazr.yourpkg.tests',
     )

@@ -15,8 +15,19 @@
     along with lazr.yourpkg.  If not, see <http://www.gnu.org/licenses/>.
 
 LAZR yourpkg
-***********
+************
 
-This is a pure template for new lazr namespace packages.  Whenever you want to
-make a new lazr subpackage, just branch this code and change all occurrences
-of 'yourpkg' with whatever your subpackage's name is.
+This is a pure template for new lazr namespace packages.  
+
+Please see https://dev.launchpad.net/LazrStyleGuide and
+https://dev.launchpad.net/Hacking for how to develop in this
+package.
+
+Importable
+==========
+
+The lazr.yourpkg package is importable, and has a version number.
+
+    >>> import lazr.yourpkg
+    >>> print 'VERSION:', lazr.yourpkg.__version__
+    VERSION: ...
