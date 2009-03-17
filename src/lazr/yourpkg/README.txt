@@ -23,6 +23,18 @@ Please see https://dev.launchpad.net/LazrStyleGuide and
 https://dev.launchpad.net/Hacking for how to develop in this
 package.
 
+This is an example Sphinx_ `Table of contents`_.  If you add files to the docs
+directory, you should probably improve it.
+
+.. toctree::
+   :glob:
+
+   *   
+   docs/*
+
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _Table of contents: http://sphinx.pocoo.org/concepts.html#the-toc-tree
+
 Importable
 ==========
 
