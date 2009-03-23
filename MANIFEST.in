@@ -1,2 +1,2 @@
-exclude MANIFEST.in buildout.cfg bootstrap.py
+exclude MANIFEST.in buildout.cfg bootstrap.py .bzrignore
 prune _bootstrap
