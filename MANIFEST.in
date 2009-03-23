@@ -1,0 +1,2 @@
+exclude MANIFEST.in buildout.cfg bootstrap.py
+prune _bootstrap
