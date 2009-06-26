@@ -25,6 +25,7 @@ __all__ = [
 import atexit
 import doctest
 import os
+# pylint: disable-msg=F0401
 from pkg_resources import (
     resource_filename, resource_exists, resource_listdir, cleanup_resources)
 import unittest

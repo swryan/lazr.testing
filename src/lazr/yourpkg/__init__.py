@@ -13,7 +13,8 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with lazr.yourpkg.  If not, see <http://www.gnu.org/licenses/>.
+
 "The lazr.yourpkg package."
 
 
-__version__ = '0.1'
+__version__ = '0.2'

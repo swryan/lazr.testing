@@ -71,6 +71,8 @@ setup(
         docs=['Sphinx',
               'z3c.recipe.sphinxdoc']
     ),
-    setup_requires=['eggtestinfo', 'setuptools_bzr'],
+    # This does not play nicely with buildout because it downloads but does
+    # not cache the package.
+    #setup_requires=['eggtestinfo', 'setuptools_bzr'],
     test_suite='lazr.yourpkg.tests',
     )
