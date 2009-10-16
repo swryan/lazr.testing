@@ -1,11 +1,12 @@
+#!/usr/bin/env python
+
 # Copyright 2009 Canonical Ltd.  All rights reserved.
 #
 # This file is part of lazr.testing
 #
 # lazr.testing is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or (at your
-# option) any later version.
+# the Free Software Foundation, version 3 of the License.
 #
 # lazr.testing is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
@@ -14,6 +15,9 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with lazr.testing.  If not, see <http://www.gnu.org/licenses/>.
+
+import ez_setup
+ez_setup.use_setuptools()
 
 import sys
 from setuptools import setup, find_packages
@@ -56,10 +60,19 @@ setup(
         'zope.interface',
         ],
     url='https://launchpad.net/lazr.testing',
+    download_url= 'https://launchpad.net/lazr.testing/+download',
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Operating System :: OS Independent",
         "Programming Language :: Python"],
+    extras_require=dict(
+        docs=['Sphinx',
+              'z3c.recipe.sphinxdoc']
+    ),
+    # This does not play nicely with buildout because it downloads but does
+    # not cache the package.
+    #setup_requires=['eggtestinfo', 'setuptools_bzr'],
+    test_suite='lazr.testing.tests',
     )

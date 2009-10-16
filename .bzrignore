@@ -3,6 +3,9 @@ develop-eggs
 .installed.cfg
 develop-eggs
 parts
-src/lazr.testing.egg-info
+*.egg-info
 tags
 TAGS
+build
+*.egg
+dist

@@ -1,0 +1,4 @@
+include *.py *.rc
+global-include *.txt *.zcml
+exclude MANIFEST.in buildout.cfg bootstrap.py .bzrignore
+prune _bootstrap
