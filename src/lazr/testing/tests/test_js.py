@@ -27,10 +27,10 @@ class JsTestDriverErrorTests(MockerTestCase):
     def setUp(self):
         super(JsTestDriverErrorTests, self).setUp()
         env_keys = [
-            "LANDSCAPE_JSTESTDRIVER_SERVER",
-            "LANDSCAPE_JSTESTDRIVER_PORT",
-            "LANDSCAPE_JSTESTDRIVER_CAPTURE_TIMEOUT",
-            "LANDSCAPE_BROWSER"]
+            "JSTESTDRIVER_SERVER",
+            "JSTESTDRIVER_PORT",
+            "JSTESTDRIVER_CAPTURE_TIMEOUT",
+            "BROWSER"]
 
         def cleanup_non_existing_key(some_key):
             try:
@@ -58,9 +58,9 @@ class JsTestDriverErrorTests(MockerTestCase):
             s = None
             raise
 
-        if "LANDSCAPE_JSTESTDRIVER_SERVER" in os.environ:
-            del os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"]
-        os.environ["LANDSCAPE_JSTESTDRIVER_PORT"] = "4225"
+        if "JSTESTDRIVER_SERVER" in os.environ:
+            del os.environ["JSTESTDRIVER_SERVER"]
+        os.environ["JSTESTDRIVER_PORT"] = "4225"
         try:
             try:
                 JsTestDriverLayer.setUp()
@@ -91,8 +91,8 @@ class JsTestDriverErrorTests(MockerTestCase):
             "-t", "JsTestDriverSelfTest"]
         arguments = [
             "--no-progress"]
-        os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"] = "http://localhost:4226"
-        os.environ["LANDSCAPE_JSTESTDRIVER_SELFTEST"] = "1"
+        os.environ["JSTESTDRIVER_SERVER"] = "http://localhost:4226"
+        os.environ["JSTESTDRIVER_SELFTEST"] = "1"
         # Patch stdout to prevent spurious output
         test_stdout = StringIO()
         old_stdout = sys.stdout
@@ -122,11 +122,11 @@ class JsTestDriverErrorTests(MockerTestCase):
         browser automatically, and set the timeout to a very short time so we
         don't wait for too long.
         """
-        os.environ["LANDSCAPE_JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
-        os.environ["LANDSCAPE_BROWSER"] = ""
-        if "LANDSCAPE_JSTESTDRIVER_SERVER" in os.environ:
-            del os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"]
-        os.environ["LANDSCAPE_JSTESTDRIVER_PORT"] = "4225"
+        os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
+        os.environ["BROWSER"] = ""
+        if "JSTESTDRIVER_SERVER" in os.environ:
+            del os.environ["JSTESTDRIVER_SERVER"]
+        os.environ["JSTESTDRIVER_PORT"] = "4225"
 
         try:
             try:
@@ -143,7 +143,7 @@ class JsTestDriverErrorTests(MockerTestCase):
 def test_suite():
     suite = unittest.TestSuite()
 
-    if os.environ.get("LANDSCAPE_JSTESTDRIVER_SELFTEST"):
+    if os.environ.get("JSTESTDRIVER_SELFTEST"):
         suite.addTests(unittest.makeSuite(JsTestDriverSelfTest))
     else:
         suite.addTests(unittest.makeSuite(JsTestDriverErrorTests))

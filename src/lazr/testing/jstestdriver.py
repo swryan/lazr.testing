@@ -145,13 +145,13 @@ class JsTestDriverResultParser(object):
 
 
 def startJsTestDriver():
-    jstestdriver = os.environ["LANDSCAPE_JSTESTDRIVER"]
-    port = os.environ.get("LANDSCAPE_JSTESTDRIVER_PORT", "4224")
+    jstestdriver = os.environ["JSTESTDRIVER"]
+    port = os.environ.get("JSTESTDRIVER_PORT", "4224")
 
     capture_timeout = int(os.environ.get(
-        "LANDSCAPE_JSTESTDRIVER_CAPTURE_TIMEOUT", "30"))
+        "JSTESTDRIVER_CAPTURE_TIMEOUT", "30"))
     browser = os.environ.get(
-        "LANDSCAPE_BROWSER",
+        "BROWSER",
         os.path.join(os.path.dirname(__file__), "browser_wrapper.py"))
 
     cmd = jstestdriver.split() + ["--port", port]
@@ -210,7 +210,7 @@ def startJsTestDriver():
             "\nError: %s" %
             (capture_timeout, "\n".join(output)))
     else:
-        os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"] = (
+        os.environ["JSTESTDRIVER_SERVER"] = (
             "http://localhost:%s" % port)
     return proc
 
@@ -230,7 +230,7 @@ class JsTestDriverLayer(object):
     @classmethod
     def setUp(cls):
         cls.proc = None
-        if os.environ.get("LANDSCAPE_JSTESTDRIVER_SERVER") is None:
+        if os.environ.get("JSTESTDRIVER_SERVER") is None:
             cls.proc = startJsTestDriver()
 
     @classmethod
@@ -239,7 +239,7 @@ class JsTestDriverLayer(object):
             # If the process was created by us, then that means the
             # environment variable has been set by ourselves too, so
             # we must unset it.
-            del os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"]
+            del os.environ["JSTESTDRIVER_SERVER"]
             terminateProcess(cls.proc)
 
 
@@ -262,8 +262,8 @@ class JsTestDriverTestCase(MockerTestCase):
         self.output_dir = self.makeDir()
 
     def _runTest(self, result):
-        jstestdriver = os.environ["LANDSCAPE_JSTESTDRIVER"]
-        server = os.environ["LANDSCAPE_JSTESTDRIVER_SERVER"]
+        jstestdriver = os.environ["JSTESTDRIVER"]
+        server = os.environ["JSTESTDRIVER_SERVER"]
         cmd = jstestdriver.split() + ["--config",
                                       self.config_filename,
                                       "--testOutput",

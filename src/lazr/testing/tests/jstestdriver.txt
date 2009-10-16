@@ -19,7 +19,7 @@ available.
 Set JSTESTDRIVER_SELFTEST in the environment in order to enable the
 self test registration:
 
-    >>> os.environ["LANDSCAPE_JSTESTDRIVER_SELFTEST"] = "1"
+    >>> os.environ["JSTESTDRIVER_SELFTEST"] = "1"
 
 Run in verbose mode, so that the timings are displayed too. Progress
 doesn't work very well at the moment due to JsTestDriver not reporting
@@ -153,4 +153,4 @@ test count upfront so disable it.
        testAssertNull:BrowserN.N.N.N (FailureInlineTestCase)
     True
 
-    >>> del os.environ["LANDSCAPE_JSTESTDRIVER_SELFTEST"]
+    >>> del os.environ["JSTESTDRIVER_SELFTEST"]
