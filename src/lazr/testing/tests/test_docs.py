@@ -36,7 +36,7 @@ DOCTEST_FLAGS = (
     doctest.REPORT_NDIFF)
 
 
-def additional_tests():
+def test_suite():
     "Run the doc tests (README.txt and docs/*, if any exist)"
     doctest_files = [
         os.path.abspath(resource_filename('lazr.testing', 'README.txt'))]

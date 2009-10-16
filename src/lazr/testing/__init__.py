@@ -16,5 +16,5 @@
 
 "The lazr.testing package."
 
-
-__version__ = '0.2'
+import pkg_resources
+__version__ = pkg_resources.resource_string("lazr.testing", "version.txt").strip()

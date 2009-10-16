@@ -36,9 +36,7 @@ def generate(*docname_or_string):
     return '\n'.join(res)
 # end generic helpers
 
-
-sys.path.insert(0, 'src')
-from lazr.testing import __version__
+__version__ = open("src/lazr/testing/version.txt").read().strip()
 
 setup(
     name='lazr.testing',
@@ -56,8 +54,11 @@ setup(
         'src/lazr/testing/NEWS.txt'),
     license='LGPL v3',
     install_requires=[
+        'mocker',
         'setuptools',
+        'zope.exceptions',
         'zope.interface',
+        'zope.testing',
         ],
     url='https://launchpad.net/lazr.testing',
     download_url= 'https://launchpad.net/lazr.testing/+download',

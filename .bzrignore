@@ -9,3 +9,5 @@ TAGS
 build
 *.egg
 dist
+download-cache
+eggs
