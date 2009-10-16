@@ -28,7 +28,7 @@ def generate(*docname_or_string):
     for value in docname_or_string:
         if value.endswith('.txt'):
             f = open(value)
-            value = f.read()
+            value = f.read().split('..\n    end-pypi', 1)[0]
             f.close()
         res.append(value)
         if not value.endswith('\n'):
@@ -51,6 +51,7 @@ setup(
     description=open('README.txt').readline().strip(),
     long_description=generate(
         'src/lazr/testing/README.txt',
+        'src/lazr/testing/docs/jstestdriver.txt',
         'src/lazr/testing/NEWS.txt'),
     license='LGPL v3',
     install_requires=[

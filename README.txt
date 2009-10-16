@@ -1,6 +1,4 @@
-This is a template for your lazr package.  To start your own lazr package,
-branch this code and change 'testing' to your package's actual name in all
-files.
+A collection of testing helpers.
 
 ..
     This file is part of lazr.testing.
@@ -16,3 +14,5 @@ files.
 
     You should have received a copy of the GNU Lesser General Public License
     along with lazr.testing.  If not, see <http://www.gnu.org/licenses/>.
+
+Please see the package README for an introduction.

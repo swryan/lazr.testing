@@ -1,3 +1,4 @@
+
 ..
     This file is part of lazr.testing.
 
@@ -16,29 +17,19 @@
 LAZR testing
 ************
 
-This is a pure template for new lazr namespace packages.
-
 Please see https://dev.launchpad.net/LazrStyleGuide and
 https://dev.launchpad.net/Hacking for how to develop in this
 package.
 
-This is an example Sphinx_ `Table of contents`_.  If you add files to the docs
-directory, you should probably improve it.
+..
+    end-pypi
+
+===============
+Other Documents
+===============
 
 .. toctree::
    :glob:
 
    *
    docs/*
-
-.. _Sphinx: http://sphinx.pocoo.org/
-.. _Table of contents: http://sphinx.pocoo.org/concepts.html#the-toc-tree
-
-Importable
-==========
-
-The lazr.testing package is importable, and has a version number.
-
-    >>> import lazr.testing
-    >>> print 'VERSION:', lazr.testing.__version__
-    VERSION: ...
