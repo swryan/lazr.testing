@@ -43,7 +43,7 @@ class JsTestDriverResult(object):
         return None
 
     def id(self):
-        return "%s.%s:%s" % (self.classname, self.name, self.browser)
+        return "%s.%s.%s" % (self.browser, self.classname, self.name)
 
     def __str__(self):
         return "%s:%s (%s)" % (self.name, self.browser, self.classname)
@@ -103,8 +103,8 @@ class JsTestDriverResultParser(object):
         if tag == "testsuite":
             pass
         elif tag == "testcase":
-            classname = attributes["classname"]
-            name, browser = attributes["name"].split(":", 1)
+            browser, classname = attributes["classname"].split(".", 1)
+            name = attributes["name"]
             duration = attributes["time"]
             self.test_result = JsTestDriverResult(classname, name,
                                                   browser, duration)
@@ -150,11 +150,11 @@ def startJsTestDriver():
 
     capture_timeout = int(os.environ.get(
         "JSTESTDRIVER_CAPTURE_TIMEOUT", "30"))
-    browser = os.environ.get(
-        "BROWSER",
-        os.path.join(os.path.dirname(__file__), "browser_wrapper.py"))
+    browser = os.environ.get("JSTESTDRIVER_BROWSER", None)
+    if browser == "default":
+        browser = os.path.join(os.path.dirname(__file__), "browser_wrapper.py")
 
-    cmd = jstestdriver.split() + ["--port", port]
+    cmd = jstestdriver.split() + ["--port", port, "--runnerMode", "INFO"]
     if browser:
         cmd.extend(["--browser", browser])
 
@@ -283,10 +283,11 @@ class JsTestDriverTestCase(MockerTestCase):
                 "%s (%s)\nError: %s" %
                 (self.config_filename, server, stderr))
         if stderr:
-            test_result = GlobalJsTestDriverResult(str(self), self.id())
-            result.startTest(test_result)
-            result.addFailure(
-                test_result, (RuntimeError, RuntimeError(stderr), None))
+            if not "Finished action run." in stderr:
+                test_result = GlobalJsTestDriverResult(str(self), self.id())
+                result.startTest(test_result)
+                result.addFailure(
+                    test_result, (RuntimeError, RuntimeError(stderr), None))
 
     def _reportResults(self, result):
         """Parse generated test results and report them to L{unittest}.
@@ -299,7 +300,7 @@ class JsTestDriverTestCase(MockerTestCase):
                 output.close()
 
             expat = xml.parsers.expat.ParserCreate()
-            parser = JsTestDriverResultParser(expat, result)
+            JsTestDriverResultParser(expat, result)
             expat.Parse(body, 1)
 
     def run(self, result=None):
