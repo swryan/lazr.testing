@@ -110,7 +110,7 @@ class JsTestDriverResultParser(object):
                                                   browser, duration)
             self.result.startTest(self.test_result)
         elif tag == "error":
-            self.test_result.error_message = attributes["message"]
+            self.test_result.failure_type = attributes["type"]
         elif tag == "failure":
             self.test_result.failure_type = attributes["type"]
         else:
@@ -150,11 +150,18 @@ def startJsTestDriver():
 
     capture_timeout = int(os.environ.get(
         "JSTESTDRIVER_CAPTURE_TIMEOUT", "30"))
-    browser = os.environ.get("JSTESTDRIVER_BROWSER", None)
+
+    # With JsTestDriver 1.2.2 no messages are printed unless
+    # --runnerMode=INFO.
+    cmd = jstestdriver.split() + ["--port", port, "--runnerMode", "INFO"]
+
+    # By default we run the tests with the preferred browser
+    # configured at the OS level. This is done by using the webbrowser
+    # module, through browser_wrapper.py.
+    browser = os.environ.get("JSTESTDRIVER_BROWSER", "default")
     if browser == "default":
         browser = os.path.join(os.path.dirname(__file__), "browser_wrapper.py")
 
-    cmd = jstestdriver.split() + ["--port", port, "--runnerMode", "INFO"]
     if browser:
         cmd.extend(["--browser", browser])
 
@@ -277,12 +284,18 @@ class JsTestDriverTestCase(MockerTestCase):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-        if proc.returncode != 0:
+        # JsTestDriver 1.2.2 outputs this message to stdout when the
+        # actual tests failed. It also returns an error code. Only
+        # raise an error if the tests did not run at all, but not if
+        # they just failed.
+        if proc.returncode != 0 and not "Tests failed." in stdout:
             raise ValueError(
                 "Failed to execute JsTestDriver tests for:\n"
                 "%s (%s)\nError: %s" %
                 (self.config_filename, server, stderr))
         if stderr:
+            # JsTestDriver 1.2.2 outputs this message for a successful
+            # run with --runnerMode=INFO.
             if not "Finished action run." in stderr:
                 test_result = GlobalJsTestDriverResult(str(self), self.id())
                 result.startTest(test_result)
