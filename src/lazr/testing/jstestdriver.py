@@ -34,7 +34,8 @@ class JsTestDriverResult(object):
         self.name = name
         self.browser = browser
         self.duration = duration
-        self.message = []
+        self.message = None
+        self.content = []
 
     def countTestCases(self):
         return 1
@@ -59,7 +60,6 @@ class GlobalJsTestDriverResult(object):
     def __init__(self, name, test_id):
         self.name = name
         self.test_id = test_id
-        self.message = []
 
     def countTestCases(self):
         return 1
@@ -109,10 +109,11 @@ class JsTestDriverResultParser(object):
             self.test_result = JsTestDriverResult(classname, name,
                                                   browser, duration)
             self.result.startTest(self.test_result)
-        elif tag == "error":
+        elif tag in ("error", "failure"):
             self.test_result.failure_type = attributes["type"]
-        elif tag == "failure":
-            self.test_result.failure_type = attributes["type"]
+            message = attributes.get("message", None)
+            if message is not None:
+                self.test_result.message = message
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
@@ -127,13 +128,23 @@ class JsTestDriverResultParser(object):
                 self.result.addSuccess(self.test_result)
             self.result.stopTest(self.test_result)
         elif tag == "error":
+            message = self.test_result.message
+            if message is None:
+                message = self.test_result.content
+            else:
+                message = [message]
             try:
-                raise JsTestDriverError(self.test_result.message)
+                raise JsTestDriverError(message)
             except:
                 self.result.addError(self.test_result, sys.exc_info())
         elif tag == "failure":
+            message = self.test_result.message
+            if message is None:
+                message = self.test_result.content
+            else:
+                message = [message]
             try:
-                raise JsTestDriverFailure(self.test_result.message)
+                raise JsTestDriverFailure(message)
             except:
                 self.result.addFailure(self.test_result, sys.exc_info())
         else:
@@ -141,7 +152,7 @@ class JsTestDriverResultParser(object):
 
     def CharacterDataHandler(self, data):
         if self.test_result is not None:
-            self.test_result.message.append(data)
+            self.test_result.content.append(data)
 
 
 def startJsTestDriver():
