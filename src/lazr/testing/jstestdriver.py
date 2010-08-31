@@ -155,7 +155,9 @@ def startJsTestDriver():
         os.path.join(os.path.dirname(__file__), "browser_wrapper.py"))
 
     cmd = jstestdriver.split() + ["--port", port]
+    wait_for_browser = False
     if browser:
+        wait_for_browser = True
         cmd.extend(["--browser", browser])
 
     # Redirect stderr through a temporary file, so that it doesn't
@@ -174,22 +176,23 @@ def startJsTestDriver():
                                 stderr=fd,
                                 close_fds=True)
 
-        # Give the server process a few seconds to capture the browser.
-        output = []
-        start = time.time()
-        while time.time() - start < capture_timeout:
-            rc = proc.poll()
-            if rc is not None:
-                break
-            line = stderr.readline()
-            if not line:
-                # time.sleep(0.1)
-                continue
-            output.append(line)
-            # A browser was captured, no reason to wait any longer.
-            if line.startswith("INFO: Browser Captured:"):
-                captured = True
-                break
+        if wait_for_browser:
+            # Give the server process a few seconds to capture the browser.
+            output = []
+            start = time.time()
+            while time.time() - start < capture_timeout:
+                rc = proc.poll()
+                if rc is not None:
+                    break
+                line = stderr.readline()
+                if not line:
+                    # time.sleep(0.1)
+                    continue
+                output.append(line)
+                # A browser was captured, no reason to wait any longer.
+                if line.startswith("INFO: Browser Captured:"):
+                    captured = True
+                    break
     finally:
         stderr.close()
 
@@ -200,7 +203,7 @@ def startJsTestDriver():
             "Failed to execute JsTestDriver server on port %s:"
             "\nError: (%s) %s" %
             (port, rc, "\n".join(output)))
-    elif not captured:
+    elif not captured and wait_for_browser:
         # Kill the process ourselves, since it failed to capture a
         # browser within the time we specified but did not exit by
         # itself.
