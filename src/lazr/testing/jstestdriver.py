@@ -89,6 +89,7 @@ class JsTestDriverResultParser(object):
         self.expat = expat
         self.result = result
         self.test_result = None
+        self.test_results = {}
 
         # attach expat parser methods
         for name, value in type(self).__dict__.items():
@@ -99,6 +100,50 @@ class JsTestDriverResultParser(object):
             except AttributeError:
                 pass
 
+    def _add_success(self, test_result):
+        if isinstance(self.result, ZopeTestResult):
+            self.result.options.output.test_success(
+                test_result, float(test_result.duration))
+        else:
+            self.result.addSuccess(test_result)
+
+    def _add_failure(self, test_result):
+        message = test_result.message
+        if message is None:
+            message = test_result.content
+        else:
+            message = [message]
+        try:
+            raise JsTestDriverFailure(message)
+        except:
+            self.result.addFailure(test_result, sys.exc_info())
+
+    def _add_error(self, test_result):
+        message = test_result.message
+        if message is None:
+            message = test_result.content
+        else:
+            message = [message]
+        try:
+            raise JsTestDriverError(message)
+        except:
+            self.result.addError(test_result, sys.exc_info())
+
+    def add_results(self):
+        for test_result, outcome in sorted(
+                self.test_results.items(), key=lambda x: x[0].id()):
+            self.result.startTest(test_result)
+            if outcome == "success":
+                pass
+            elif outcome == "failure":
+                self._add_failure(test_result)
+            elif outcome == "error":
+                self._add_error(test_result)
+            else:
+                raise ValueError("Unknown test outcome: %s" % outcome)
+            self._add_success(test_result)
+            self.result.stopTest(self.test_result)
+
     def StartElementHandler(self, tag, attributes):
         if tag == "testsuite":
             pass
@@ -108,7 +153,6 @@ class JsTestDriverResultParser(object):
             duration = attributes["time"]
             self.test_result = JsTestDriverResult(classname, name,
                                                   browser, duration)
-            self.result.startTest(self.test_result)
         elif tag in ("error", "failure"):
             self.test_result.failure_type = attributes["type"]
             message = attributes.get("message", None)
@@ -121,32 +165,12 @@ class JsTestDriverResultParser(object):
         if tag == "testsuite":
             pass
         elif tag == "testcase":
-            if isinstance(self.result, ZopeTestResult):
-                self.result.options.output.test_success(
-                    self.test_result, float(self.test_result.duration))
-            else:
-                self.result.addSuccess(self.test_result)
-            self.result.stopTest(self.test_result)
+            if self.test_result not in self.test_results:
+                self.test_results[self.test_result] = "success"
         elif tag == "error":
-            message = self.test_result.message
-            if message is None:
-                message = self.test_result.content
-            else:
-                message = [message]
-            try:
-                raise JsTestDriverError(message)
-            except:
-                self.result.addError(self.test_result, sys.exc_info())
+            self.test_results[self.test_result] = "error"
         elif tag == "failure":
-            message = self.test_result.message
-            if message is None:
-                message = self.test_result.content
-            else:
-                message = [message]
-            try:
-                raise JsTestDriverFailure(message)
-            except:
-                self.result.addFailure(self.test_result, sys.exc_info())
+            self.test_results[self.test_result] = "failure"
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
@@ -316,7 +340,7 @@ class JsTestDriverTestCase(MockerTestCase):
     def _reportResults(self, result):
         """Parse generated test results and report them to L{unittest}.
         """
-        for fname in os.listdir(self.output_dir):
+        for fname in sorted(os.listdir(self.output_dir)):
             output = open(os.path.join(self.output_dir, fname), "r")
             try:
                 body = output.read()
@@ -324,8 +348,9 @@ class JsTestDriverTestCase(MockerTestCase):
                 output.close()
 
             expat = xml.parsers.expat.ParserCreate()
-            JsTestDriverResultParser(expat, result)
+            parser = JsTestDriverResultParser(expat, result)
             expat.Parse(body, 1)
+            parser.add_results()
 
     def run(self, result=None):
         if result is None:

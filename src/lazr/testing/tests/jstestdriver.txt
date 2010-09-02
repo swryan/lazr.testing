@@ -30,15 +30,6 @@ test count upfront so disable it.
     Running lazr.testing.jstestdriver.JsTestDriverLayer tests:
       Set up lazr.testing.jstestdriver.JsTestDriverLayer in N.NNN seconds.
       Running:
-     testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
-    <BLANKLINE>
-    <BLANKLINE>
-    Error in test testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase)
-    Traceback (most recent call last):
-    ...
-    JsTestDriverError: "A Fit"
-    <BLANKLINE>
-     (N.NNN s)
      testAssertFalse:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -57,6 +48,15 @@ test count upfront so disable it.
     JsTestDriverError: y is not defined
     <BLANKLINE>
      (N.NNN s)
+     testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
+    <BLANKLINE>
+    <BLANKLINE>
+    Error in test testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase)
+    Traceback (most recent call last):
+    ...
+    JsTestDriverError: "A Fit"
+    <BLANKLINE>
+     (N.NNN s)
      testThrowAnError:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -64,46 +64,6 @@ test count upfront so disable it.
     Traceback (most recent call last):
     ...
     JsTestDriverError: Some Messy Message
-    <BLANKLINE>
-     (N.NNN s)
-     testAssertFalse:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
-    <BLANKLINE>
-    <BLANKLINE>
-    Failure in test testAssertFalse:BrowserN.N.N.N (FailureInlineTestCase)
-    Traceback (most recent call last):
-    ...
-    JsTestDriverFailure: Not false? Are you kidding me? expected false but was true
-    <BLANKLINE>
-     (N.NNN s)
-     testAssertNull:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
-    <BLANKLINE>
-    <BLANKLINE>
-    Failure in test testAssertNull:BrowserN.N.N.N (FailureInlineTestCase)
-    Traceback (most recent call last):
-    ...
-    JsTestDriverFailure: I was pretty sure it was null. expected null but was {}
-    <BLANKLINE>
-     (N.NNN s)
-     testAssertEquals:BrowserN.N.N.N (SuccessTestCase) (N.NNN s)
-     testAssertTrue:BrowserN.N.N.N (SuccessTestCase) (N.NNN s)
-     testAssertFalse:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
-     testAssertNull:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
-     testAssertEquals:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
-    <BLANKLINE>
-    <BLANKLINE>
-    Failure in test testAssertEquals:BrowserN.N.N.N (FailureTestCase)
-    Traceback (most recent call last):
-    ...
-    JsTestDriverFailure: expected "Hello" but was "World!"
-    <BLANKLINE>
-     (N.NNN s)
-     testAssertTrue:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
-    <BLANKLINE>
-    <BLANKLINE>
-    Failure in test testAssertTrue:BrowserN.N.N.N (FailureTestCase)
-    Traceback (most recent call last):
-    ...
-    JsTestDriverFailure: How can that possibly be false? expected true but was false
     <BLANKLINE>
      (N.NNN s)
      testAssertEquals:BrowserN.N.N.N (ErrorTestCase) (N.NNN s)
@@ -124,14 +84,54 @@ test count upfront so disable it.
     JsTestDriverError: y is not defined
     <BLANKLINE>
      (N.NNN s)
+     testAssertFalse:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
+    <BLANKLINE>
+    <BLANKLINE>
+    Failure in test testAssertFalse:BrowserN.N.N.N (FailureInlineTestCase)
+    Traceback (most recent call last):
+    ...
+    JsTestDriverFailure: Not false? Are you kidding me? expected false but was true
+    <BLANKLINE>
+     (N.NNN s)
+     testAssertNull:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
+    <BLANKLINE>
+    <BLANKLINE>
+    Failure in test testAssertNull:BrowserN.N.N.N (FailureInlineTestCase)
+    Traceback (most recent call last):
+    ...
+    JsTestDriverFailure: I was pretty sure it was null. expected null but was {}
+    <BLANKLINE>
+     (N.NNN s)
+     testAssertEquals:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
+    <BLANKLINE>
+    <BLANKLINE>
+    Failure in test testAssertEquals:BrowserN.N.N.N (FailureTestCase)
+    Traceback (most recent call last):
+    ...
+    JsTestDriverFailure: expected "Hello" but was "World!"
+    <BLANKLINE>
+     (N.NNN s)
+     testAssertTrue:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
+    <BLANKLINE>
+    <BLANKLINE>
+    Failure in test testAssertTrue:BrowserN.N.N.N (FailureTestCase)
+    Traceback (most recent call last):
+    ...
+    JsTestDriverFailure: How can that possibly be false? expected true but was false
+    <BLANKLINE>
+     (N.NNN s)
+     testAssertFalse:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
+     testAssertNull:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
+     testAssertEquals:BrowserN.N.N.N (SuccessTestCase) (N.NNN s)
+     testAssertTrue:BrowserN.N.N.N (SuccessTestCase) (N.NNN s)
       Ran 14 tests with 4 failures and 6 errors in N.NNN seconds.
     Tearing down left over layers:
       Tear down lazr.testing.jstestdriver.JsTestDriverLayer in N.NNN seconds.
     <BLANKLINE>
     Tests with errors:
-       testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase)
        testAssertFalse:BrowserN.N.N.N (ErrorInlineTestCase)
        testAssertNull:BrowserN.N.N.N (ErrorInlineTestCase)
+       testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase)
        testThrowAnError:BrowserN.N.N.N (ErrorInlineTestCase)
        testAssertEquals:BrowserN.N.N.N (ErrorTestCase)
        testAssertTrue:BrowserN.N.N.N (ErrorTestCase)
