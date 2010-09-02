@@ -134,15 +134,14 @@ class JsTestDriverResultParser(object):
                 self.test_results.items(), key=lambda x: x[0].id()):
             self.result.startTest(test_result)
             if outcome == "success":
-                pass
+                self._add_success(test_result)
             elif outcome == "failure":
                 self._add_failure(test_result)
             elif outcome == "error":
                 self._add_error(test_result)
             else:
                 raise ValueError("Unknown test outcome: %s" % outcome)
-            self._add_success(test_result)
-            self.result.stopTest(self.test_result)
+            self.result.stopTest(test_result)
 
     def StartElementHandler(self, tag, attributes):
         if tag == "testsuite":

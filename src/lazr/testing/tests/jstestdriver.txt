@@ -38,7 +38,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: y is not defined
     <BLANKLINE>
-     (N.NNN s)
      testAssertNull:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -47,7 +46,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: y is not defined
     <BLANKLINE>
-     (N.NNN s)
      testThrowAFit:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -56,7 +54,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: "A Fit"
     <BLANKLINE>
-     (N.NNN s)
      testThrowAnError:BrowserN.N.N.N (ErrorInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -65,7 +62,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: Some Messy Message
     <BLANKLINE>
-     (N.NNN s)
      testAssertEquals:BrowserN.N.N.N (ErrorTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -74,7 +70,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: y is not defined
     <BLANKLINE>
-     (N.NNN s)
      testAssertTrue:BrowserN.N.N.N (ErrorTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -83,7 +78,6 @@ test count upfront so disable it.
     ...
     JsTestDriverError: y is not defined
     <BLANKLINE>
-     (N.NNN s)
      testAssertFalse:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -92,7 +86,6 @@ test count upfront so disable it.
     ...
     JsTestDriverFailure: Not false? Are you kidding me? expected false but was true
     <BLANKLINE>
-     (N.NNN s)
      testAssertNull:BrowserN.N.N.N (FailureInlineTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -101,7 +94,6 @@ test count upfront so disable it.
     ...
     JsTestDriverFailure: I was pretty sure it was null. expected null but was {}
     <BLANKLINE>
-     (N.NNN s)
      testAssertEquals:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -110,7 +102,6 @@ test count upfront so disable it.
     ...
     JsTestDriverFailure: expected "Hello" but was "World!"
     <BLANKLINE>
-     (N.NNN s)
      testAssertTrue:BrowserN.N.N.N (FailureTestCase) (N.NNN s)
     <BLANKLINE>
     <BLANKLINE>
@@ -119,7 +110,6 @@ test count upfront so disable it.
     ...
     JsTestDriverFailure: How can that possibly be false? expected true but was false
     <BLANKLINE>
-     (N.NNN s)
      testAssertFalse:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
      testAssertNull:BrowserN.N.N.N (SuccessInlineTestCase) (N.NNN s)
      testAssertEquals:BrowserN.N.N.N (SuccessTestCase) (N.NNN s)
