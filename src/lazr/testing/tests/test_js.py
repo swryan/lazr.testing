@@ -159,6 +159,7 @@ def test_suite():
             (re.compile(r"\d+[.]\d\d\d s"), "N.NNN s"),
             (re.compile(r"\d+[.]\d\d\d{"), "N.NNN{"),
             (re.compile(r":\w+[\d\.]+ "), ":BrowserN.N.N.N "),
+            (re.compile(r":\w+_\d+_\w+ "), ":BrowserN.N.N.N "),
 
             # omit traceback entries for jstestdriver.py or doctest.py from
             # output:
