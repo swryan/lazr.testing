@@ -30,7 +30,7 @@ class JsTestDriverErrorTests(MockerTestCase):
             "JSTESTDRIVER_SERVER",
             "JSTESTDRIVER_PORT",
             "JSTESTDRIVER_CAPTURE_TIMEOUT",
-            "BROWSER"]
+            "JSTESTDRIVER_BROWSER"]
 
         def cleanup_non_existing_key(some_key):
             try:
@@ -123,7 +123,7 @@ class JsTestDriverErrorTests(MockerTestCase):
         don't wait for too long.
         """
         os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
-        os.environ["BROWSER"] = ""
+        os.environ["JSTESTDRIVER_BROWSER"] = ""
         if "JSTESTDRIVER_SERVER" in os.environ:
             del os.environ["JSTESTDRIVER_SERVER"]
         os.environ["JSTESTDRIVER_PORT"] = "4225"
