@@ -34,7 +34,8 @@ class JsTestDriverResult(object):
         self.name = name
         self.browser = browser
         self.duration = duration
-        self.message = []
+        self.message = None
+        self.content = []
 
     def countTestCases(self):
         return 1
@@ -43,7 +44,7 @@ class JsTestDriverResult(object):
         return None
 
     def id(self):
-        return "%s.%s:%s" % (self.classname, self.name, self.browser)
+        return "%s.%s.%s" % (self.browser, self.classname, self.name)
 
     def __str__(self):
         return "%s:%s (%s)" % (self.name, self.browser, self.classname)
@@ -59,7 +60,6 @@ class GlobalJsTestDriverResult(object):
     def __init__(self, name, test_id):
         self.name = name
         self.test_id = test_id
-        self.message = []
 
     def countTestCases(self):
         return 1
@@ -89,6 +89,7 @@ class JsTestDriverResultParser(object):
         self.expat = expat
         self.result = result
         self.test_result = None
+        self.test_results = {}
 
         # attach expat parser methods
         for name, value in type(self).__dict__.items():
@@ -99,20 +100,63 @@ class JsTestDriverResultParser(object):
             except AttributeError:
                 pass
 
+    def _add_success(self, test_result):
+        if isinstance(self.result, ZopeTestResult):
+            self.result.options.output.test_success(
+                test_result, float(test_result.duration))
+        else:
+            self.result.addSuccess(test_result)
+
+    def _add_failure(self, test_result):
+        message = test_result.message
+        if message is None:
+            message = test_result.content
+        else:
+            message = [message]
+        try:
+            raise JsTestDriverFailure(message)
+        except:
+            self.result.addFailure(test_result, sys.exc_info())
+
+    def _add_error(self, test_result):
+        message = test_result.message
+        if message is None:
+            message = test_result.content
+        else:
+            message = [message]
+        try:
+            raise JsTestDriverError(message)
+        except:
+            self.result.addError(test_result, sys.exc_info())
+
+    def add_results(self):
+        for test_result, outcome in sorted(
+                self.test_results.items(), key=lambda x: x[0].id()):
+            self.result.startTest(test_result)
+            if outcome == "success":
+                self._add_success(test_result)
+            elif outcome == "failure":
+                self._add_failure(test_result)
+            elif outcome == "error":
+                self._add_error(test_result)
+            else:
+                raise ValueError("Unknown test outcome: %s" % outcome)
+            self.result.stopTest(test_result)
+
     def StartElementHandler(self, tag, attributes):
         if tag == "testsuite":
             pass
         elif tag == "testcase":
-            classname = attributes["classname"]
-            name, browser = attributes["name"].split(":", 1)
+            browser, classname = attributes["classname"].split(".", 1)
+            name = attributes["name"]
             duration = attributes["time"]
             self.test_result = JsTestDriverResult(classname, name,
                                                   browser, duration)
-            self.result.startTest(self.test_result)
-        elif tag == "error":
-            self.test_result.error_message = attributes["message"]
-        elif tag == "failure":
+        elif tag in ("error", "failure"):
             self.test_result.failure_type = attributes["type"]
+            message = attributes.get("message", None)
+            if message is not None:
+                self.test_result.message = message
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
@@ -120,28 +164,18 @@ class JsTestDriverResultParser(object):
         if tag == "testsuite":
             pass
         elif tag == "testcase":
-            if isinstance(self.result, ZopeTestResult):
-                self.result.options.output.test_success(
-                    self.test_result, float(self.test_result.duration))
-            else:
-                self.result.addSuccess(self.test_result)
-            self.result.stopTest(self.test_result)
+            if self.test_result not in self.test_results:
+                self.test_results[self.test_result] = "success"
         elif tag == "error":
-            try:
-                raise JsTestDriverError(self.test_result.message)
-            except:
-                self.result.addError(self.test_result, sys.exc_info())
+            self.test_results[self.test_result] = "error"
         elif tag == "failure":
-            try:
-                raise JsTestDriverFailure(self.test_result.message)
-            except:
-                self.result.addFailure(self.test_result, sys.exc_info())
+            self.test_results[self.test_result] = "failure"
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
     def CharacterDataHandler(self, data):
         if self.test_result is not None:
-            self.test_result.message.append(data)
+            self.test_result.content.append(data)
 
 
 def startJsTestDriver():
@@ -150,11 +184,18 @@ def startJsTestDriver():
 
     capture_timeout = int(os.environ.get(
         "JSTESTDRIVER_CAPTURE_TIMEOUT", "30"))
-    browser = os.environ.get(
-        "BROWSER",
-        os.path.join(os.path.dirname(__file__), "browser_wrapper.py"))
 
-    cmd = jstestdriver.split() + ["--port", port]
+    # With JsTestDriver 1.2.2 no messages are printed unless
+    # --runnerMode=INFO.
+    cmd = jstestdriver.split() + ["--port", port, "--runnerMode", "INFO"]
+
+    # By default we run the tests with the preferred browser
+    # configured at the OS level. This is done by using the webbrowser
+    # module, through browser_wrapper.py.
+    browser = os.environ.get("JSTESTDRIVER_BROWSER", "default")
+    if browser == "default":
+        browser = os.path.join(os.path.dirname(__file__), "browser_wrapper.py")
+
     wait_for_browser = False
     if browser:
         wait_for_browser = True
@@ -280,21 +321,28 @@ class JsTestDriverTestCase(MockerTestCase):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-        if proc.returncode != 0:
+        # JsTestDriver 1.2.2 outputs this message to stdout when the
+        # actual tests failed. It also returns an error code. Only
+        # raise an error if the tests did not run at all, but not if
+        # they just failed.
+        if proc.returncode != 0 and not "Tests failed." in stdout:
             raise ValueError(
                 "Failed to execute JsTestDriver tests for:\n"
                 "%s (%s)\nError: %s" %
                 (self.config_filename, server, stderr))
         if stderr:
-            test_result = GlobalJsTestDriverResult(str(self), self.id())
-            result.startTest(test_result)
-            result.addFailure(
-                test_result, (RuntimeError, RuntimeError(stderr), None))
+            # JsTestDriver 1.2.2 outputs this message for a successful
+            # run with --runnerMode=INFO.
+            if not "Finished action run." in stderr:
+                test_result = GlobalJsTestDriverResult(str(self), self.id())
+                result.startTest(test_result)
+                result.addFailure(
+                    test_result, (RuntimeError, RuntimeError(stderr), None))
 
     def _reportResults(self, result):
         """Parse generated test results and report them to L{unittest}.
         """
-        for fname in os.listdir(self.output_dir):
+        for fname in sorted(os.listdir(self.output_dir)):
             output = open(os.path.join(self.output_dir, fname), "r")
             try:
                 body = output.read()
@@ -304,6 +352,7 @@ class JsTestDriverTestCase(MockerTestCase):
             expat = xml.parsers.expat.ParserCreate()
             parser = JsTestDriverResultParser(expat, result)
             expat.Parse(body, 1)
+            parser.add_results()
 
     def run(self, result=None):
         if result is None:
