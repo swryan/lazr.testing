@@ -53,6 +53,7 @@ class JsTestDriverResult(object):
         return "<%s testMethod=%s, browser=%s>" % (self.classname,
                                                    self.name, self.browser)
 
+
 class GlobalJsTestDriverResult(object):
 
     failureException = JsTestDriverFailure
@@ -364,4 +365,3 @@ class JsTestDriverTestCase(MockerTestCase):
 
     def runTest(self):
         self.run()
-
