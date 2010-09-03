@@ -190,6 +190,64 @@ class JsTestDriverErrorTests(MockerTestCase):
         self.assertEqual(
             "http://localhost:4225", os.environ["JSTESTDRIVER_SERVER"])
 
+    def test_server_fail(self):
+        """
+        If we a poll of the process returns a non-None value while we
+        are waiting, we report that server couldn't be started.
+        """
+        mock_Popen = self.mocker.replace("subprocess.Popen")
+        mock_proc = self.mocker.mock()
+        mock_Popen(ARGS, KWARGS)
+        self.mocker.result(mock_proc)
+
+        mock_open = self.mocker.replace("__builtin__.open")
+        mock_open(ANY)
+        mock_file = self.mocker.mock()
+        self.mocker.result(mock_file)
+
+        with self.mocker.order():
+            mock_time = self.mocker.replace("time.time")
+            # start = time.time()
+            mock_time()
+            start_time = 0
+            self.mocker.result(start_time)
+
+            # time.time() - start
+            mock_time()
+            self.mocker.result(start_time)
+            mock_proc.poll()
+            self.mocker.result(None)
+            mock_file.readline()
+            self.mocker.result("INFO: still starting")
+
+            # time.time() - start
+            mock_time()
+            self.mocker.result(start_time)
+            mock_proc.poll()
+            self.mocker.result(1)
+
+            mock_file.close()
+            self.mocker.result(None)
+
+        self.mocker.replay()
+
+        # Set timeout to a low value, so that we don't have to wait
+        # long.
+        os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
+        os.environ["JSTESTDRIVER_BROWSER"] = ""
+        if "JSTESTDRIVER_SERVER" in os.environ:
+            del os.environ["JSTESTDRIVER_SERVER"]
+        os.environ["JSTESTDRIVER_PORT"] = "4225"
+
+        try:
+            JsTestDriverLayer.setUp()
+        except ValueError, e:
+            msg = str(e)
+            self.assertIn(
+                "Failed to execute JsTestDriver server on port 4225", msg)
+        else:
+            self.fail("ValueError not raised")
+
     def tearDown(self):
         super(JsTestDriverErrorTests, self).tearDown()
         self.mocker.restore()
