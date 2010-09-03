@@ -172,7 +172,7 @@ class JsTestDriverErrorTests(MockerTestCase):
 
         with self.mocker.order():
             mock_time = self.mocker.replace("time.time")
-            # The first time is to initialize the star time.
+            # The first time is to initialize the start time.
             mock_time()
             start_time = 0
             self.mocker.result(start_time)
@@ -217,7 +217,7 @@ class JsTestDriverErrorTests(MockerTestCase):
 
         with self.mocker.order():
             mock_time = self.mocker.replace("time.time")
-            # The first time is to initialize the star time.
+            # The first time is to initialize the start time.
             mock_time()
             start_time = 0
             self.mocker.result(start_time)
@@ -246,8 +246,6 @@ class JsTestDriverErrorTests(MockerTestCase):
 
         self.mocker.replay()
 
-        os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
-        os.environ["JSTESTDRIVER_BROWSER"] = ""
         if "JSTESTDRIVER_SERVER" in os.environ:
             del os.environ["JSTESTDRIVER_SERVER"]
         os.environ["JSTESTDRIVER_PORT"] = "4225"
@@ -273,35 +271,32 @@ class JsTestDriverErrorTests(MockerTestCase):
             del os.environ["JSTESTDRIVER_SERVER"]
         os.environ["JSTESTDRIVER_PORT"] = "4225"
 
-        mock_Popen = self.mocker.replace("subprocess.Popen")
-        mock_proc = self.mocker.mock()
-        mock_Popen(ARGS, KWARGS)
-        self.mocker.result(mock_proc)
-
-        mock_open = self.mocker.replace("__builtin__.open")
-        mock_open(ANY)
-        mock_file = self.mocker.mock()
-        self.mocker.result(mock_file)
+        mock_proc = self.mock_popen()
+        mock_file = self.mock_builtin_open()
 
         with self.mocker.order():
             mock_time = self.mocker.replace("time.time")
-            # start = time.time()
+            # The first time is to initialize the start time.
             mock_time()
             start_time = 0
             self.mocker.result(start_time)
 
-            # time.time() - start
+            # The second time is to check if the timeout is exceeded in
+            # the while loop.
             mock_time()
             self.mocker.result(start_time)
+            # Go one iteration of the while loop, reporting the server
+            # is starting up.
             mock_proc.poll()
             self.mocker.result(None)
             mock_file.readline()
             self.mocker.result("INFO: still starting")
 
-            # time.time() - start
+            # Trigger a timeout.
             mock_time()
             self.mocker.result(start_time + timeout + 1)
 
+            # The opened file is closed.
             mock_file.close()
             self.mocker.result(None)
 
@@ -330,6 +325,7 @@ class JsTestDriverErrorTests(MockerTestCase):
     def tearDown(self):
         super(JsTestDriverErrorTests, self).tearDown()
         self.mocker.restore()
+
 
 def test_suite():
     suite = unittest.TestSuite()
