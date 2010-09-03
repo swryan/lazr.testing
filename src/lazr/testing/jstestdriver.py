@@ -207,6 +207,7 @@ def startJsTestDriver():
     fd, name = tempfile.mkstemp()
     stderr = open(name)
     captured = False
+    server_started = False
     rc = None
 
     try:
@@ -233,9 +234,11 @@ def startJsTestDriver():
             # A browser was captured, no reason to wait any longer.
             if line.startswith("INFO: Browser Captured:"):
                 captured = True
+                server_started = True
                 break
             if not wait_for_browser and line.startswith(
                 "INFO: Finished action run."):
+                server_started = True
                 break
     finally:
         stderr.close()
@@ -247,6 +250,13 @@ def startJsTestDriver():
             "Failed to execute JsTestDriver server on port %s:"
             "\nError: (%s) %s" %
             (port, rc, "\n".join(output)))
+    if not server_started:
+        terminateProcess(proc)
+        raise ValueError(
+            "Failed to execute JsTestDriver server in %d seconds on port %s:"
+            "\nError: (%s) %s" %
+            (capture_timeout, port, rc, "\n".join(output)))
+
     elif not captured and wait_for_browser:
         # Kill the process ourselves, since it failed to capture a
         # browser within the time we specified but did not exit by
