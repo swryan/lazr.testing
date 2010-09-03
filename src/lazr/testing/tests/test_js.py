@@ -123,7 +123,7 @@ class JsTestDriverErrorTests(MockerTestCase):
         don't wait for too long.
         """
         os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
-        os.environ["JSTESTDRIVER_BROWSER"] = ""
+        os.environ["JSTESTDRIVER_BROWSER"] = "not-a-browser"
         if "JSTESTDRIVER_SERVER" in os.environ:
             del os.environ["JSTESTDRIVER_SERVER"]
         os.environ["JSTESTDRIVER_PORT"] = "4225"
