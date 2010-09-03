@@ -9,7 +9,7 @@ from cStringIO import StringIO
 
 from os.path import dirname
 
-from mocker import MockerTestCase
+from mocker import ANY, ARGS, KWARGS, MockerTestCase
 
 from zope.testing import testrunner
 
@@ -27,6 +27,7 @@ class JsTestDriverErrorTests(MockerTestCase):
     def setUp(self):
         super(JsTestDriverErrorTests, self).setUp()
         env_keys = [
+            "JSTESTDRIVER",
             "JSTESTDRIVER_SERVER",
             "JSTESTDRIVER_PORT",
             "JSTESTDRIVER_CAPTURE_TIMEOUT",
@@ -114,7 +115,7 @@ class JsTestDriverErrorTests(MockerTestCase):
         finally:
             sys.stdout = old_stdout
 
-    def test_timeout(self):
+    def test_timeout_browser(self):
         """
         If we fail to capture a browser within the specified timeout, an
         appropriate message is shown. In order to test that, let's set the
@@ -139,6 +140,59 @@ class JsTestDriverErrorTests(MockerTestCase):
         finally:
             JsTestDriverLayer.tearDown()
 
+    def test_wait_for_server_startup(self):
+        """
+        Even if we don't wait for the browser to be captured, we wait
+        for the server to start up.
+        """
+        mock_Popen = self.mocker.replace("subprocess.Popen")
+        mock_proc = self.mocker.mock()
+        mock_Popen(ARGS, KWARGS)
+        self.mocker.result(mock_proc)
+
+        mock_open = self.mocker.replace("__builtin__.open")
+        mock_open(ANY)
+        mock_file = self.mocker.mock()
+        self.mocker.result(mock_file)
+
+        with self.mocker.order():
+            mock_time = self.mocker.replace("time.time")
+            # start = time.time()
+            mock_time()
+            start_time = 0
+            self.mocker.result(start_time)
+
+            # time.time() - start
+            mock_time()
+            self.mocker.result(start_time)
+            mock_proc.poll()
+            self.mocker.result(None)
+            mock_file.readline()
+            self.mocker.result("INFO: Finished action run.")
+
+            mock_file.close()
+            self.mocker.result(None)
+            # Last check to make sure the server is running ok.
+            mock_proc.poll()
+            self.mocker.result(None)
+
+        self.mocker.replay()
+
+        # Set timeout to a low value, so that we don't have to wait
+        # long.
+        os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
+        os.environ["JSTESTDRIVER_BROWSER"] = ""
+        if "JSTESTDRIVER_SERVER" in os.environ:
+            del os.environ["JSTESTDRIVER_SERVER"]
+        os.environ["JSTESTDRIVER_PORT"] = "4225"
+
+        JsTestDriverLayer.setUp()
+        self.assertEqual(
+            "http://localhost:4225", os.environ["JSTESTDRIVER_SERVER"])
+
+    def tearDown(self):
+        super(JsTestDriverErrorTests, self).tearDown()
+        self.mocker.restore()
 
 def test_suite():
     suite = unittest.TestSuite()

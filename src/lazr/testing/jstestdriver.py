@@ -217,23 +217,26 @@ def startJsTestDriver():
                                 stderr=fd,
                                 close_fds=True)
 
-        if wait_for_browser:
-            # Give the server process a few seconds to capture the browser.
-            output = []
-            start = time.time()
-            while time.time() - start < capture_timeout:
-                rc = proc.poll()
-                if rc is not None:
-                    break
-                line = stderr.readline()
-                if not line:
-                    # time.sleep(0.1)
-                    continue
-                output.append(line)
-                # A browser was captured, no reason to wait any longer.
-                if line.startswith("INFO: Browser Captured:"):
-                    captured = True
-                    break
+        # Give the server process a few seconds to start, and
+        # capture the browser if needed.
+        output = []
+        start = time.time()
+        while time.time() - start < capture_timeout:
+            rc = proc.poll()
+            if rc is not None:
+                break
+            line = stderr.readline()
+            if not line:
+                # time.sleep(0.1)
+                continue
+            output.append(line)
+            # A browser was captured, no reason to wait any longer.
+            if line.startswith("INFO: Browser Captured:"):
+                captured = True
+                break
+            if not wait_for_browser and line.startswith(
+                "INFO: Finished action run."):
+                break
     finally:
         stderr.close()
 
