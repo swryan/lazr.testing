@@ -250,7 +250,7 @@ def startJsTestDriver():
             "Failed to execute JsTestDriver server on port %s:"
             "\nError: (%s) %s" %
             (port, rc, "\n".join(output)))
-    if not server_started:
+    if not server_started and not wait_for_browser:
         terminateProcess(proc)
         raise ValueError(
             "Failed to execute JsTestDriver server in %d seconds on port %s:"
