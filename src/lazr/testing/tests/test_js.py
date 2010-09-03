@@ -22,6 +22,7 @@ class JsTestDriverSelfTest(JsTestDriverTestCase):
     config_filename = os.path.abspath(os.path.join(os.path.dirname(__file__),
                                                    "js", "tests.conf"))
 
+
 class JsTestDriverErrorTests(MockerTestCase):
 
     def setUp(self):
