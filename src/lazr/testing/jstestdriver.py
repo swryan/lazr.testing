@@ -234,12 +234,11 @@ def startJsTestDriver():
             # A browser was captured, no reason to wait any longer.
             if line.startswith("INFO: Browser Captured:"):
                 captured = True
-                server_started = True
                 break
-            if not wait_for_browser and line.startswith(
-                "INFO: Finished action run."):
+            if line.startswith("INFO: Finished action run."):
                 server_started = True
-                break
+                if not wait_for_browser:
+                    break
     finally:
         stderr.close()
 
