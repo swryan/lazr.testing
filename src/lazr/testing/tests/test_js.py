@@ -140,47 +140,64 @@ class JsTestDriverErrorTests(MockerTestCase):
         finally:
             JsTestDriverLayer.tearDown()
 
+    def mock_popen(self):
+        """Replace subprocess.Popen and make it return a mock process.
+
+        The mock process is returned.
+        """
+        mock_Popen = self.mocker.replace("subprocess.Popen")
+        self.mock_proc = self.mocker.mock()
+        mock_Popen(ARGS, KWARGS)
+        self.mocker.result(self.mock_proc)
+        return self.mock_proc
+
+    def mock_builtin_open(self):
+        """Replace built-in open and make it return a mock file.
+
+        The mock file is returned.
+        """
+        mock_open = self.mocker.replace("__builtin__.open")
+        mock_open(ANY)
+        self.mock_file = self.mocker.mock()
+        self.mocker.result(self.mock_file)
+        return self.mock_file
+
     def test_wait_for_server_startup(self):
         """
         Even if we don't wait for the browser to be captured, we wait
         for the server to start up.
         """
-        mock_Popen = self.mocker.replace("subprocess.Popen")
-        mock_proc = self.mocker.mock()
-        mock_Popen(ARGS, KWARGS)
-        self.mocker.result(mock_proc)
-
-        mock_open = self.mocker.replace("__builtin__.open")
-        mock_open(ANY)
-        mock_file = self.mocker.mock()
-        self.mocker.result(mock_file)
+        mock_proc = self.mock_popen()
+        mock_file = self.mock_builtin_open()
 
         with self.mocker.order():
             mock_time = self.mocker.replace("time.time")
-            # start = time.time()
+            # The first time is to initialize the star time.
             mock_time()
             start_time = 0
             self.mocker.result(start_time)
 
-            # time.time() - start
+            # The second time is to check if the timeout is exceeded in
+            # the while loop.
             mock_time()
             self.mocker.result(start_time)
+            # Go one iteration of the while loop, reporting the the
+            # server has started.
             mock_proc.poll()
             self.mocker.result(None)
             mock_file.readline()
             self.mocker.result("INFO: Finished action run.")
 
+            # The opened file is closed.
             mock_file.close()
             self.mocker.result(None)
+
             # Last check to make sure the server is running ok.
             mock_proc.poll()
             self.mocker.result(None)
 
         self.mocker.replay()
 
-        # Set timeout to a low value, so that we don't have to wait
-        # long.
-        os.environ["JSTESTDRIVER_CAPTURE_TIMEOUT"] = "1"
         os.environ["JSTESTDRIVER_BROWSER"] = ""
         if "JSTESTDRIVER_SERVER" in os.environ:
             del os.environ["JSTESTDRIVER_SERVER"]
