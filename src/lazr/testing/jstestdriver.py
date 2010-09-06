@@ -197,7 +197,9 @@ def startJsTestDriver():
     if browser == "default":
         browser = os.path.join(os.path.dirname(__file__), "browser_wrapper.py")
 
+    wait_for_browser = False
     if browser:
+        wait_for_browser = True
         cmd.extend(["--browser", browser])
 
     # Redirect stderr through a temporary file, so that it doesn't
@@ -206,6 +208,7 @@ def startJsTestDriver():
     fd, name = tempfile.mkstemp()
     stderr = open(name)
     captured = False
+    server_started = False
     rc = None
 
     try:
@@ -216,7 +219,8 @@ def startJsTestDriver():
                                 stderr=fd,
                                 close_fds=True)
 
-        # Give the server process a few seconds to capture the browser.
+        # Give the server process a few seconds to start, and
+        # capture the browser if needed.
         output = []
         start = time.time()
         while time.time() - start < capture_timeout:
@@ -232,6 +236,10 @@ def startJsTestDriver():
             if line.startswith("INFO: Browser Captured:"):
                 captured = True
                 break
+            if line.startswith("INFO: Finished action run."):
+                server_started = True
+                if not wait_for_browser:
+                    break
     finally:
         stderr.close()
 
@@ -242,7 +250,14 @@ def startJsTestDriver():
             "Failed to execute JsTestDriver server on port %s:"
             "\nError: (%s) %s" %
             (port, rc, "\n".join(output)))
-    elif not captured:
+    if not server_started and not wait_for_browser:
+        terminateProcess(proc)
+        raise ValueError(
+            "Failed to execute JsTestDriver server in %d seconds on port %s:"
+            "\nError: (%s) %s" %
+            (capture_timeout, port, rc, "\n".join(output)))
+
+    elif not captured and wait_for_browser:
         # Kill the process ourselves, since it failed to capture a
         # browser within the time we specified but did not exit by
         # itself.
