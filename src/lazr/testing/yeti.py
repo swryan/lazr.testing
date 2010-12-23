@@ -7,7 +7,6 @@ import subprocess
 
 from unittest import TestCase
 from subunit import ProtocolTestCase
-from cStringIO import StringIO
 
 
 def startYeti():
@@ -131,10 +130,10 @@ class YetiTestCase(TestCase):
         proc = subprocess.Popen(cmd,
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
-        stdout, stderr = proc.communicate()
-        suite = ProtocolTestCase(StringIO(stdout))
+                                stderr=subprocess.STDOUT)
+        suite = ProtocolTestCase(proc.stdout)
         suite.run(result)
+        proc.wait()
 
     def run(self, result=None):
         if result is None:
