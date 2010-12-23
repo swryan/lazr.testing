@@ -122,6 +122,7 @@ class YetiTestCase(TestCase):
         yeti = os.environ["YETI"]
         port = os.environ.get("YETI_PORT", "4422")
         cmd = yeti.split() + ["--formatter=subunit",
+                              "--quiet",
                               "--solo=1",
                               "--port=%s" % port]
         for base, dirs, files in os.walk(self.tests_directory):
