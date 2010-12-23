@@ -7,6 +7,7 @@ import subprocess
 
 from unittest import TestCase
 from subunit import ProtocolTestCase
+from cStringIO import StringIO
 
 
 def startYeti():
@@ -119,9 +120,10 @@ class YetiTestCase(TestCase):
     layer = YetiLayer
 
     def _runTest(self, result):
-        port = os.environ["YETI_PORT"]
         yeti = os.environ["YETI"]
+        port = os.environ.get("YETI_PORT", "4422")
         cmd = yeti.split() + ["--formatter=subunit",
+                              "--solo=1",
                               "--port=%s" % port]
         for base, dirs, files in os.walk(self.tests_directory):
             for filename in fnmatch.filter(files, "test_*.html"):
@@ -131,7 +133,7 @@ class YetiTestCase(TestCase):
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-        suite = ProtocolTestCase(stdout)
+        suite = ProtocolTestCase(StringIO(stdout))
         suite.run(result)
 
     def run(self, result=None):
