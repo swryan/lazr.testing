@@ -8,7 +8,9 @@ import xml.parsers.expat
 
 from mocker import MockerTestCase
 
-from zope.testing.testrunner.runner import TestResult as ZopeTestResult
+# New version of zope testing code has been restructured !
+#from zope.testing.testrunner.runner import TestResult as ZopeTestResult
+from zope.testrunner.runner import TestResult as ZopeTestResult
 
 
 class JsTestDriverError(Exception):
@@ -158,6 +160,8 @@ class JsTestDriverResultParser(object):
             message = attributes.get("message", None)
             if message is not None:
                 self.test_result.message = message
+        elif tag == "system-out":
+             pass
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
@@ -171,6 +175,8 @@ class JsTestDriverResultParser(object):
             self.test_results[self.test_result] = "error"
         elif tag == "failure":
             self.test_results[self.test_result] = "failure"
+        elif tag == "system-out":
+             pass
         else:
             raise ValueError("Unexpected tag: %s" % tag)
 
